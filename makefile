@@ -3,8 +3,8 @@ GITHUB_ID := alanbixby
 COURSE := CSXXX
 CP := 1
 EXECUTABLE_NAME := program$(CP)
-TAR_NAME := $(notdir $(CURDIR))
-TAR_IGNORES := .vscode spec tree-visualizer
+TAR_NAME := abixby1_$(CP)
+TAR_IGNORES := .vscode spec
 
 # Source File Directory
 SOURCES_DIR := src
