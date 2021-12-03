@@ -1,25 +1,27 @@
 # Project Information and Contact Details
-GITHUB_ID := bbearcat1
-B_NUMBER := B00123456
+GITHUB_ID := alanbixby
 COURSE := CSXXX
 CP := 1
-EXECUTABLE_NAME := group-project
-TAR_NAME := abixby1
-TAR_IGNORES := .vscode spec
+EXECUTABLE_NAME := program$(CP)
+TAR_NAME := $(notdir $(CURDIR))
+TAR_IGNORES := .vscode spec tree-visualizer
 
-WORKING_DIR := src
+# Source File Directory
+SOURCES_DIR := src
 
 # Flags
 CXXFLAGS := -Wall -Wextra -std=c++17 -O3
-DEBUG :=
 LDFLAGS :=
 LDLIBS :=
 
+# Debug Flag - hides debugging by default (recommended; use make debug to debug)
+DEBUG := -DNDEBUG
+
 # Tar Flags
-TAR_FLAGS := --exclude-vcs --exclude-vcs-ignores $(addprefix --exclude=, $(TAR_IGNORES))
+TAR_IGNORES := --exclude-vcs --exclude-vcs-ignores $(addprefix --exclude=, $(TAR_IGNORES))
 
 # Source Files
-SRC_FILES = $(shell find $(WORKING_DIR)/ -type f -name '*.cpp')
+SRC_FILES = $(shell find $(SOURCES_DIR)/ -type f -name '*.cpp')
 OBJ_FILES := $(patsubst %.cpp,%.o,$(SRC_FILES))
 DEP_FILES := $(patsubst %.cpp,%.d,$(SRC_FILES))
 
@@ -34,24 +36,28 @@ $(EXECUTABLE_NAME): $(OBJ_FILES)
 %.o: %.cpp
 		$(CXX) $(CXXFLAGS) $(LDFLAGS) $(DEBUG) -MMD -MP -c $< -o $@ $(LDLIBS)
 
+all: $(EXECUTABLE_NAME)
+
+debug:
+	@$(MAKE) --no-print-directory DEBUG="" rebuild
+
+new: clean run
+
 run: $(EXECUTABLE_NAME)
 		./$(EXECUTABLE_NAME)
 
-all: $(EXECUTABLE_NAME)
 
 rebuild: clean $(EXECUTABLE_NAME)
 
 tar: clean
 		&& ln -sf $(notdir $(CURDIR)) $(TAR_NAME) \
 		&& tar $(TAR_FLAGS) --dereference -cvzf $(TAR_NAME).tar.gz $(TAR_NAME) \
-		cd .. \
-	
+		cd .. \	
 		&& mv $(TAR_NAME).tar.gz $(notdir $(CURDIR))/$(TAR_NAME).tar.gz \
 		; rm $(TAR_NAME)
 
 clean:
-		find . -type f -name '*.o,.d' -delete
-		find . -type f -name '*.o,.d' -exec rm {} \;
-		rm -f **/*.o **/*.d null.d $(EXECUTABLE_NAME) *.tar.gz
+		find . -type f -name '*.o' -delete -o -name '*.d' -delete
+		rm -f $(EXECUTABLE_NAME) *.tar.gz
 
 .PHONY: $(EXECUTABLE_NAME) all debug run rebuild tar clean
