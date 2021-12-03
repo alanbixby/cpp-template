@@ -46,7 +46,6 @@ new: clean run
 run: $(EXECUTABLE_NAME)
 		./$(EXECUTABLE_NAME)
 
-
 rebuild: clean $(EXECUTABLE_NAME)
 
 tar: clean
