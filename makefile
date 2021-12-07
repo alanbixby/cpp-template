@@ -7,6 +7,9 @@ EXECUTABLE_NAME := program$(CP)
 TAR_NAME := $(BU_NAME)_program$(CP)
 TAR_IGNORES := .vscode spec
 
+# Make Run Arguments
+RUN_ARGS :=
+
 # Source File Directory
 SOURCES_DIR := src
 
@@ -14,6 +17,10 @@ SOURCES_DIR := src
 CXXFLAGS := -Wall -Wextra -std=c++17 -O3
 LDFLAGS :=
 LDLIBS :=
+
+#################################################################################################
+#                 ***You should not have to edit the makefile past this line.***                #
+#################################################################################################
 
 # Debug Flag - hides debugging by default (recommended; use make debug to debug)
 DEBUG := -DNDEBUG
@@ -45,12 +52,9 @@ debug:
 new: clean run
 
 run: $(EXECUTABLE_NAME)
-		./$(EXECUTABLE_NAME)
+		./$(EXECUTABLE_NAME) $(RUN_ARGS)
 
 rebuild: clean $(EXECUTABLE_NAME)
-
-gitignore:
-	curl -s https://raw.githubusercontent.com/alanbixby/cpp-template/master/.gitignore > .gitignore
 
 tar: clean
 		cd .. \
@@ -58,8 +62,9 @@ tar: clean
 		&& tar $(TAR_IGNORES) --dereference -cvzf $(TAR_NAME).tar.gz $(TAR_NAME) \
 		&& mv $(TAR_NAME).tar.gz $(notdir $(CURDIR))/$(TAR_NAME).tar.gz \
 		; rm $(TAR_NAME)
+		
 clean:
 		find . -type f -name '*.o' -delete -o -name '*.d' -delete
 		rm -f $(EXECUTABLE_NAME) *.tar.gz
 
-.PHONY: $(EXECUTABLE_NAME) all debug run rebuild gitignore tar clean
+.PHONY: $(EXECUTABLE_NAME) all debug run rebuild tar clean
