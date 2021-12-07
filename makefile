@@ -30,7 +30,7 @@ DEP_FILES := $(patsubst %.cpp,%.d,$(SRC_FILES))
 $(EXECUTABLE_NAME): $(OBJ_FILES)
 		$(CXX) $(CXXFLAGS) $(LDFLAGS) $^ -o $@ $(LDLIBS)
 # Update .gitignore to exclude the executable; ignore if .gitignore is absent
-		-sed -i "1c $(EXECUTABLE_NAME)" .gitignore
+		-sed -i "1c $(EXECUTABLE_NAME)" .gitignore 2> /dev/null
 
 -include $(DEP_FILES)
 
