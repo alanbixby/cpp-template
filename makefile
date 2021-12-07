@@ -1,9 +1,10 @@
 # Project Information and Contact Details
+BU_NAME := abixby1
 GITHUB_ID := alanbixby
 COURSE := CSXXX
 CP := 1
 EXECUTABLE_NAME := program$(CP)
-TAR_NAME := abixby1_$(CP)
+TAR_NAME := $(BU_NAME)_program$(CP)
 TAR_IGNORES := .vscode spec
 
 # Source File Directory
@@ -29,7 +30,7 @@ DEP_FILES := $(patsubst %.cpp,%.d,$(SRC_FILES))
 $(EXECUTABLE_NAME): $(OBJ_FILES)
 		$(CXX) $(CXXFLAGS) $(LDFLAGS) $^ -o $@ $(LDLIBS)
 # Update .gitignore to exclude the executable; ignore if .gitignore is absent
-		-sed -i "1c $(EXECUTABLE_NAME)" .gitignore 2> /dev/null
+		-sed -i "1c $(EXECUTABLE_NAME)" .gitignore
 
 -include $(DEP_FILES)
 
@@ -48,15 +49,17 @@ run: $(EXECUTABLE_NAME)
 
 rebuild: clean $(EXECUTABLE_NAME)
 
+gitignore:
+	curl -s https://raw.githubusercontent.com/alanbixby/cpp-template/master/.gitignore > .gitignore
+
 tar: clean
+		cd .. \
 		&& ln -sf $(notdir $(CURDIR)) $(TAR_NAME) \
-		&& tar $(TAR_FLAGS) --dereference -cvzf $(TAR_NAME).tar.gz $(TAR_NAME) \
-		cd .. \	
+		&& tar $(TAR_IGNORES) --dereference -cvzf $(TAR_NAME).tar.gz $(TAR_NAME) \
 		&& mv $(TAR_NAME).tar.gz $(notdir $(CURDIR))/$(TAR_NAME).tar.gz \
 		; rm $(TAR_NAME)
-
 clean:
 		find . -type f -name '*.o' -delete -o -name '*.d' -delete
 		rm -f $(EXECUTABLE_NAME) *.tar.gz
 
-.PHONY: $(EXECUTABLE_NAME) all debug run rebuild tar clean
+.PHONY: $(EXECUTABLE_NAME) all debug run rebuild gitignore tar clean
