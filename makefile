@@ -7,13 +7,14 @@ EXECUTABLE_NAME := program$(CP)
 TAR_NAME := $(BU_NAME)_program$(CP)
 TAR_IGNORES := .vscode spec
 
+# Source File Directory - if none, use .
+SOURCES_DIR := src
+FILE_EXT := cpp
+
 # Make Run Arguments
 RUN_ARGS :=
 
-# Source File Directory
-SOURCES_DIR := src
-
-# Flags
+# Compiler Flags - should be fine for most people
 CXXFLAGS := -Wall -Wextra -std=c++17 -O3
 LDFLAGS :=
 LDLIBS :=
@@ -29,9 +30,9 @@ DEBUG := -DNDEBUG
 TAR_IGNORES := --exclude-vcs --exclude-vcs-ignores $(addprefix --exclude=, $(TAR_IGNORES))
 
 # Source Files
-SRC_FILES = $(shell find $(SOURCES_DIR)/ -type f -name '*.cpp')
-OBJ_FILES := $(patsubst %.cpp,%.o,$(SRC_FILES))
-DEP_FILES := $(patsubst %.cpp,%.d,$(SRC_FILES))
+SRC_FILES = $(shell find $(SOURCES_DIR)/ -type f -name '*.$(FILE_EXT)')
+OBJ_FILES := $(patsubst %.$(FILE_EXT),%.o,$(SRC_FILES))
+DEP_FILES := $(patsubst %.$(FILE_EXT),%.d,$(SRC_FILES))
 
 # Makefile Rules
 $(EXECUTABLE_NAME): $(OBJ_FILES)
@@ -41,13 +42,13 @@ $(EXECUTABLE_NAME): $(OBJ_FILES)
 
 -include $(DEP_FILES)
 
-%.o: %.cpp
+%.o: %.$(FILE_EXT)
 		$(CXX) $(CXXFLAGS) $(LDFLAGS) $(DEBUG) -MMD -MP -c $< -o $@ $(LDLIBS)
 
 all: $(EXECUTABLE_NAME)
 
 debug:
-	@$(MAKE) --no-print-directory DEBUG="" rebuild
+		@$(MAKE) --no-print-directory DEBUG="" rebuild
 
 new: clean run
 
